@@ -62,5 +62,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.GH_TOKEN }}
-          repository: statstrade-dev/statstrade-core
+          repository: statstrade-dev/core-ci
           event-type: notify
