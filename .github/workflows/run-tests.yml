@@ -14,13 +14,18 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
         
       - name: Running Tests
-        run: docker run --network host -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):$(pwd) -w $(pwd) ghcr.io/zcaudate/testing-foundation:main lein test
+        run: > 
+          docker run --network host 
+          -v /var/run/docker.sock:/var/run/docker.sock 
+          -v $(pwd):$(pwd) 
+          -w $(pwd) 
+          ghcr.io/zcaudate/testing-foundation:main lein test
         
     services:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: test-scratch
+          POSTGRES_DB: test
           POSTGRES_PASSWORD: postgres
           POSTGRES_PORT: 5432
           POSTGRES_USER: postgres
@@ -31,7 +36,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout repository
+      - name: Checkout base repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-base
+          path: foundation-base
+          token: ${{ secrets.GH_TOKEN }}
+          
+      - name: Checkout fx repository
         uses: actions/checkout@v3
         with:
           repository: zcaudate/foundation-fx
