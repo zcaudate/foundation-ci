@@ -79,7 +79,7 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
           repository: ${{ matrix.downstream }}
-          event-type: refresh-container
+          event-type: foundation-changed
           client-payload: '{"repo": "${{ github.repository.id }}", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "comment": "${{ github.payload.comment }}"}'
 
   incomplete-base:
