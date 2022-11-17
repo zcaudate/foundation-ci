@@ -28,9 +28,10 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
         
       - name: Installing Jars
-        run: |
-          lein install
-          cp -r /root/.m2/repository/foundation docker/foundation
+        run: lein install
+        
+      - name: Copy Jars
+        run:  cp -r /root/.m2 docker/.m2
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
