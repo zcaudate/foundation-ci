@@ -1,6 +1,10 @@
 name: Run Base Tests
 
-on: [repository_dispatch, workflow_dispatch]
+on:
+  repository_dispatch:
+    types: [base-changed, all]
+  workflow_dispatch:
+    types: [base-changed, all]
 
 jobs:
   run-base-test:

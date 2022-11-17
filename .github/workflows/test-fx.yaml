@@ -1,6 +1,10 @@
 name: Run Fx Tests
 
-on: [repository_dispatch, workflow_dispatch]
+on:
+  repository_dispatch:
+    types: [fx-changed, all]
+  workflow_dispatch:
+    types: [fx-changed, all]
 
 jobs:
   run-fx-test:
