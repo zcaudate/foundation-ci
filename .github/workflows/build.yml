@@ -24,6 +24,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
+          repository: zcaudate/foundation-fx
+          path: foundation-fx
+          token: ${{ secrets.GH_TOKEN }}
+        
+      - name: Installing Jars
+        run: |
+          cd foundation-fx && lein install
+          
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
           repository: zcaudate/foundation-embed
           token: ${{ secrets.GH_TOKEN }}
         
