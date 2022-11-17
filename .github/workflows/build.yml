@@ -57,3 +57,10 @@ jobs:
           tags: '${{ steps.metadata.outputs.tags }}'
           labels: '${{ steps.metadata.outputs.labels }}'
           push: true
+          
+      - name: Notify downstream
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          repository: statstrade-dev/statstrade-core
+          event-type: notify
