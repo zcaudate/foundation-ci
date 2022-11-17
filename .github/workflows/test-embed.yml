@@ -7,49 +7,40 @@ on:
     types: [embed-changed, all]
 
 jobs:
+  
   run-embed-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
-      - name: Checkout repository
+      - name: Checkout base repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-base
+          path: foundation-base
+          token: ${{ secrets.GH_TOKEN }}
+        
+      - name: Checkout embed repository
         uses: actions/checkout@v3
         with:
           repository: zcaudate/foundation-embed
-          token: ${{ secrets.GH_TOKEN }}
-        
-      - name: Running Tests
+          path: foundation-embed
+          token: ${{ secrets.GH_TOKEN }} 
+          
+      - name: Running embed tests
         run: > 
           docker run --network host 
           -v /var/run/docker.sock:/var/run/docker.sock 
-          -v $(pwd):$(pwd) 
-          -w $(pwd) 
-          ghcr.io/zcaudate/testing-foundation:main lein test
-        
+          -v $(pwd):$(pwd)
+          -w $(pwd) ghcr.io/zcaudate/testing-foundation:main 
+          bash -c 'cd foundation-base && lein install && cd ../foundation-embed && lein test'
+   
     services:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: test
+          POSTGRES_DB: test-scratch
           POSTGRES_PASSWORD: postgres
           POSTGRES_PORT: 5432
           POSTGRES_USER: postgres
         ports:
           - 5432:5432
-
-  run-embed-incomplete:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          repository: zcaudate/foundation-embed
-          token: ${{ secrets.GH_TOKEN }}
-        
-      - name: Running Tests
-        run: > 
-          docker run --network host 
-          -v /var/run/docker.sock:/var/run/docker.sock 
-          -v $(pwd):$(pwd) 
-          -w $(pwd) 
-          ghcr.io/zcaudate/testing-foundation:main lein incomplete

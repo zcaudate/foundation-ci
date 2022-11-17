@@ -1,9 +1,10 @@
 name: Build
 
-on: [repository_dispatch, workflow_dispatch]
+on: [push, repository_dispatch, workflow_dispatch]
 
 jobs:
 
+  
   build-container:
     runs-on: ubuntu-latest
     container:
@@ -80,3 +81,76 @@ jobs:
           repository: ${{ matrix.downstream }}
           event-type: refresh-container
           client-payload: '{"repo": "${{ repository.id }}", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "comment": "${{ payload.comment }}"}'
+
+  incomplete-base:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-base
+          token: ${{ secrets.GH_TOKEN }}
+        
+      - name: List base incomplete
+        run: > 
+          docker run --network host 
+          -v /var/run/docker.sock:/var/run/docker.sock 
+          -v $(pwd):$(pwd) 
+          -w $(pwd) 
+          ghcr.io/zcaudate/testing-foundation:main lein incomplete
+
+  incomplete-embed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout base repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-base
+          path: foundation-base
+          token: ${{ secrets.GH_TOKEN }}
+        
+      - name: Checkout embed repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-embed
+          path: foundation-embed
+          token: ${{ secrets.GH_TOKEN }} 
+          
+      - name: List embed incomplete
+        run: > 
+          docker run --network host 
+          -v /var/run/docker.sock:/var/run/docker.sock 
+          -v $(pwd):$(pwd)
+          -w $(pwd) ghcr.io/zcaudate/testing-foundation:main 
+          bash -c 'cd foundation-base && lein install && cd ../foundation-embed && lein incomplete'
+
+  incomplete-fx:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout base repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-base
+          path: foundation-base
+          token: ${{ secrets.GH_TOKEN }}
+        
+      - name: Checkout fx repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-fx
+          path: foundation-fx
+          token: ${{ secrets.GH_TOKEN }} 
+          
+      - name: List fx incomplete
+        run: > 
+          docker run --network host 
+          -v /var/run/docker.sock:/var/run/docker.sock 
+          -v $(pwd):$(pwd)
+          -w $(pwd) ghcr.io/zcaudate/testing-foundation:main 
+          bash -c 'cd foundation-base && lein install && cd ../foundation-fx && lein incomplete'
+   
+   
+          
