@@ -18,8 +18,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
         
       - name: Installing Jars
-        run: |
-          cd foundation-base && lein install
+        run: cd foundation-base && lein install
           
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -29,8 +28,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
         
       - name: Installing Jars
-        run: |
-          cd foundation-fx && lein install
+        run: cd foundation-fx && lein install
           
       - name: Checkout repository
         uses: actions/checkout@v3
