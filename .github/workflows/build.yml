@@ -59,7 +59,7 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/zcaudate/foundation-embed
+          images: ghcr.io/zcaudate/foundation-ci
 
       - name: Build and Push
         uses: docker/build-push-action@v3
