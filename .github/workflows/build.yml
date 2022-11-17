@@ -9,6 +9,10 @@ jobs:
     container:
       image: ghcr.io/zcaudate/testing-foundation:main
       
+    strategy:
+      matrix:
+        downstream: ['statstrade-dev/ci']
+      
     steps:
       - name: Checkout base repository
         uses: actions/checkout@v3
@@ -73,5 +77,6 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.GH_TOKEN }}
-          repository: statstrade-dev/ci
-          event-type: notify
+          repository: ${{ matrix.downstream }}
+          event-type: refresh-container
+          client-payload: '{"repo": "${{ repository.id }}", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "comment": "${{ payload.comment }}"}'
