@@ -10,36 +10,38 @@ jobs:
       image: ghcr.io/zcaudate/testing-foundation:main
       
     steps:
-      - name: Checkout repository
+      - name: Checkout base repository
         uses: actions/checkout@v3
         with:
           repository: zcaudate/foundation-base
           path: foundation-base
           token: ${{ secrets.GH_TOKEN }}
         
-      - name: Installing Jars
-        run: cd foundation-base && lein install
+      - name: Installing base jars
+        run: |
+          cd foundation-base && lein install
           
-      - name: Checkout repository
+      - name: Checkout fx repository
         uses: actions/checkout@v3
         with:
           repository: zcaudate/foundation-fx
           path: foundation-fx
           token: ${{ secrets.GH_TOKEN }}
         
-      - name: Installing Jars
-        run: cd foundation-fx && lein install
+      - name: Installing fx jars
+        run: |
+          cd foundation-fx && lein install
           
-      - name: Checkout repository
+      - name: Checkout embed repository
         uses: actions/checkout@v3
         with:
           repository: zcaudate/foundation-embed
           token: ${{ secrets.GH_TOKEN }}
         
-      - name: Installing Jars
+      - name: Installing embed jars
         run: lein install
         
-      - name: Copy Jars
+      - name: Copy .m2 to docker
         run:  cp -r /root/.m2 docker/.m2
 
       - name: Setup Docker buildx
