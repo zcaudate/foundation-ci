@@ -41,6 +41,5 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: push web code
-        run: >
-          git config --global --add safe.directory '*'
-          cd foundation-web && lein push-web-code"
+        run: |
+          cd foundation-web && && git config --global --add safe.directory '*' && lein push-web-code"
