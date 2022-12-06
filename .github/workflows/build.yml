@@ -3,7 +3,6 @@ name: Build
 on: [push, repository_dispatch, workflow_dispatch]
 
 jobs:
-
   
   build-container:
     runs-on: ubuntu-latest
@@ -151,6 +150,34 @@ jobs:
           -v $(pwd):$(pwd)
           -w $(pwd) ghcr.io/zcaudate/testing-foundation:main 
           bash -c 'cd foundation-base && lein install && cd ../foundation-fx && lein incomplete'
-   
-   
+
+  build-react-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Write SSH keys
+        shell: bash
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_PRIVATE_COMMIT_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H github.com > ~/.ssh/known_hosts
+          
+      - name: Checkout base repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-base
+          path: foundation-base
+          token: ${{ secrets.GH_TOKEN }}
+          
+      - name: Deploying native-code
+        run: >
+          docker run --network host
+          -v /var/run/docker.sock:/var/run/docker.sock
+          -v $HOME/.ssh:/root/.ssh
+          -v $(pwd):$(pwd) -w $(pwd)
+          -e "GITHUB_TOKEN=${{ secrets.GH_TOKEN }}"  
+          -e "GITHUB_USER=${{ secrets.GH_USER }}"
+          ghcr.io/zcaudate/testing-foundation:main
+          bash -c "cd foundation-base && git config --global --add safe.directory '*' && lein push-native-code"
+
           
