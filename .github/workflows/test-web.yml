@@ -42,4 +42,4 @@ jobs:
 
       - name: push web code
         run: |
-          cd foundation-web && && git config --global --add safe.directory '*' && lein push-web-code"
+          cd foundation-web && git config --global --add safe.directory '*' && lein push-web-code"
