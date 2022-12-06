@@ -1,0 +1,45 @@
+name: Run Base Tests
+
+on:
+  repository_dispatch:
+    types: [web-changed, all]
+  workflow_dispatch:
+    types: [web-changed, all]
+
+jobs:
+
+  build-web:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/zcaudate/testing-foundation:main
+      
+    steps:
+      - name: Write SSH keys
+        shell: bash
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_PRIVATE_COMMIT_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H github.com > ~/.ssh/known_hosts
+      
+      - name: Checkout base repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-base
+          path: foundation-base
+          token: ${{ secrets.GH_TOKEN }}
+        
+      - name: Installing base jars
+        run: |
+          cd foundation-base && lein install
+          
+      - name: Checkout web repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-web
+          path: foundation-web
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: push web code
+        run: |
+          git config --global --add safe.directory '*'
+          cd foundation-web && lein push-web-code"
