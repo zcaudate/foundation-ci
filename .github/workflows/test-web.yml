@@ -1,7 +1,6 @@
 name: Run Web Tests
 
 on:
-  push: null
   repository_dispatch:
     types: [base-changed, web-changed, all]
   workflow_dispatch:
