@@ -2,9 +2,9 @@ name: Run Base Tests
 
 on:
   repository_dispatch:
-    types: [web-changed, all]
+    types: [base-changed, web-changed, all]
   workflow_dispatch:
-    types: [web-changed, all]
+    types: [base-changed, web-changed, all]
 
 jobs:
 
