@@ -20,10 +20,6 @@ jobs:
           repository: zcaudate/foundation-base
           path: foundation-base
           token: ${{ secrets.GH_TOKEN }}
-        
-      - name: Installing base jars
-        run: |
-          cd foundation-base && lein install
           
       - name: Checkout web repository
         uses: actions/checkout@v3
@@ -31,10 +27,12 @@ jobs:
           repository: zcaudate/foundation-web
           path: foundation-web
           token: ${{ secrets.GH_TOKEN }}
-        
-      - name: Installing web jars
-        run: |
-          cd foundation-web && lein install
+          
+      - name: Checkout embed repository
+        uses: actions/checkout@v3
+        with:
+          repository: zcaudate/foundation-embed
+          token: ${{ secrets.GH_TOKEN }}
           
       - name: Checkout fx repository
         uses: actions/checkout@v3
@@ -42,16 +40,25 @@ jobs:
           repository: zcaudate/foundation-fx
           path: foundation-fx
           token: ${{ secrets.GH_TOKEN }}
+
+      - name: Maven Cache
+        uses: actions/cache@v3
+        with:
+          path: /root/.m2/repository
+          # redownload everything if any project.clj changes
+          key: m2-cache-${{ hashFiles('**/project.clj') }}
+        
+      - name: Installing base jars
+        run: |
+          cd foundation-base && lein install
+        
+      - name: Installing web jars
+        run: |
+          cd foundation-web && lein install
         
       - name: Installing fx jars
         run: |
           cd foundation-fx && lein install
-          
-      - name: Checkout embed repository
-        uses: actions/checkout@v3
-        with:
-          repository: zcaudate/foundation-embed
-          token: ${{ secrets.GH_TOKEN }}
         
       - name: Installing embed jars
         run: lein install
