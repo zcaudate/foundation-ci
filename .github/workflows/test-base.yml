@@ -36,7 +36,7 @@ jobs:
         ports:
           - 5432:5432
           
-  build-react-native:
+  build-demos:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
